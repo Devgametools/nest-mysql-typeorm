@@ -16,7 +16,7 @@ export class UsersService {
   // GET ALL USERS
   async findAll(): Promise<User[]> {
     try {
-      return await this.userRepository.find();
+      return await this.userRepository.find({ relations: ['profile'] });
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : String(error));
     }
@@ -25,7 +25,12 @@ export class UsersService {
   // Get user by ID
   async findOne(id: number): Promise<User | HttpException> {
     try {
-      const user = await this.userRepository.findOneBy({ id });
+      const user = await this.userRepository.findOne({
+        where: {
+          id: id,
+        },
+        relations: ['profile'],
+      });
       if (user) {
         return user;
       } else {
@@ -112,6 +117,23 @@ export class UsersService {
           `User with id ${id} deleted successfully`,
           HttpStatus.OK,
         );
+      }
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  // GET USER POSTS
+  async getUserPosts(id: number): Promise<User | HttpException> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: id },
+        relations: ['posts'],
+      });
+      if (user) {
+        return user;
+      } else {
+        return new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : String(error));
