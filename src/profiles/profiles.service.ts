@@ -10,8 +10,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 export class ProfilesService {
   constructor(
       @InjectRepository(Profile)
-      @InjectRepository(User)
       private profileRepository: Repository<Profile>,
+      @InjectRepository(User)
       private userRepository: Repository<User>,
     ) {}
 
